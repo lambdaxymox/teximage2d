@@ -9,3 +9,9 @@ description = "A library for working with graphics textures and compile-time bin
 [dependencies]
 texture = { path = "texture/" }
 texture_gen = { path = "texture_gen/" }
+
+
+[build-dependencies]
+texture = { path = "texture/" }
+texture_gen = { path = "texture_gen/" }
+
