@@ -4,7 +4,7 @@ use texture::{Rgba, TexImage2D};
 
 const SAMPLE_DATA: &str = "assets/sample.png";
 
-/// The expected integration test data from the sample image.
+/// The integration test data expected from the sample image.
 /// NOTE: 
 /// 0xFF0000FF = { R: 255, G:   0, B:   0, A: 255 }
 /// 0x00FF00FF = { R:   0, G: 255, B:   0, A: 255 }
@@ -53,11 +53,21 @@ fn test_load_file_yields_correct_height() {
     assert_eq!(result.height, expected.height);
 }
 
+/// The number of pixels in the loaded image matches the number
+/// of pixels in the expected image.
+#[test]
+fn test_load_file_yields_correct_pixel_count() {
+    let result = texture::load_file(SAMPLE_DATA).unwrap();
+    let expected = image();
+
+    assert_eq!(result.pixel_count(), expected.pixel_count());
+}
+
 /// The number of pixels in the image matches the width * height. That is, it satisfies
 /// 
 /// `number of pixels == width * height.`
 #[test]
-fn test_load_file_yields_correct_pixel_count() {
+fn test_height_times_width_equals_pixel_count() {
     let image = texture::load_file(SAMPLE_DATA).unwrap();
     let height = image.height as usize;
     let width = image.width as usize;
