@@ -60,6 +60,10 @@ impl TexImage2D {
         }
     }
 
+    pub fn pixel_count(&self) -> usize {
+        self.data.len()
+    }
+
     #[inline]
     pub fn as_ptr(&self) -> *const u8 {
         &self.data[0].r

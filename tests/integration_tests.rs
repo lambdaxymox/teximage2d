@@ -53,6 +53,19 @@ fn test_load_file_yields_correct_height() {
     assert_eq!(result.height, expected.height);
 }
 
+/// The number of pixels in the image matches the width * height. That is, it satisfies
+/// 
+/// `number of pixels == width * height.`
+#[test]
+fn test_load_file_yields_correct_pixel_count() {
+    let image = texture::load_file(SAMPLE_DATA).unwrap();
+    let height = image.height as usize;
+    let width = image.width as usize;
+    let pixel_count = image.pixel_count();
+
+    assert_eq!(width * height, pixel_count);
+}
+
 /// The file loader yields the correct data block.
 #[test]
 fn test_load_file_yields_correct_data_block() {
