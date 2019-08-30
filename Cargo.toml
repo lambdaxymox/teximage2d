@@ -3,7 +3,8 @@ name = "teximage2d"
 version = "0.1.0"
 authors = ["LambdaXymox <lambda.xymox@gmail.com>"]
 edition = "2018"
-description = "A library for working with graphics textures and compile-time embedding."
+description = "A library for working with graphics textures and compile-time binary embedding."
+
 
 [dependencies]
-stb_image = "0.2.2"
+texture = { path = "texture/" }
