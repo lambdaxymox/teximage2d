@@ -84,7 +84,7 @@ fn test_load_file_yields_correct_data_block() {
 
     assert_eq!(result.data, expected.data);
 }
-/*
+
 /// The file loader yields the expected texture image.
 #[test]
 fn test_load_file_yields_correct_texture_image() {
@@ -93,4 +93,3 @@ fn test_load_file_yields_correct_texture_image() {
 
     assert_eq!(result, expected);
 }
-*/
