@@ -1,10 +1,10 @@
-#![allow(dead_code)]
 use stb_image::image;
 use stb_image::image::LoadResult;
+use std::mem;
 use std::path::Path;
 
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct Rgba {
     r: u8,
     g: u8,
@@ -26,6 +26,14 @@ impl Default for Rgba {
     }
 }
 
+impl From<u32> for Rgba {
+    #[inline]
+    fn from(v: u32) -> Rgba {
+        unsafe { mem::transmute(v) }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub struct TexImage2D {
     pub width: u32,
     pub height: u32,
@@ -40,6 +48,15 @@ impl TexImage2D {
             height: height,
             depth: 4,
             data: vec![Rgba::default(); (width * height) as usize],
+        }
+    }
+
+    pub fn from_rgba_data(width: u32, height: u32, data: Vec<Rgba>) -> TexImage2D {
+        TexImage2D {
+            width: width,
+            height: height,
+            depth: 4,
+            data: data,
         }
     }
 

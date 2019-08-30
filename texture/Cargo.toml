@@ -3,7 +3,7 @@ name = "texture"
 version = "0.1.0"
 authors = ["LambdaXymox <lambda.xymox@gmail.com>"]
 edition = "2018"
-description = "A crate for working with texture images."
+description = "A crate for working with TexImage2D objects."
 
 
 [dependencies]
