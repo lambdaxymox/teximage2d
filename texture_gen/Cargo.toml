@@ -5,5 +5,6 @@ authors = ["LambdaXymox <lambda.xymox@gmail.com>"]
 edition = "2018"
 description = "Code generator for TexImage2D objects."
 
+
 [dependencies]
 texture = { path = "../texture" }
