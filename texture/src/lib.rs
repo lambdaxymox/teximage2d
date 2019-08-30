@@ -28,8 +28,13 @@ impl Default for Rgba {
 
 impl From<u32> for Rgba {
     #[inline]
-    fn from(v: u32) -> Rgba {
-        unsafe { mem::transmute(v) }
+    fn from(val: u32) -> Rgba {
+        Rgba {
+            r: ((val & 0xFF000000) >> 24) as u8,
+            g: ((val & 0x00FF0000) >> 16) as u8,
+            b: ((val & 0x0000FF00) >> 8) as u8,
+            a: ((val & 0x000000FF) >> 0) as u8,
+        }
     }
 }
 
@@ -165,4 +170,19 @@ pub fn load_file<P: AsRef<Path>>(file_path: P) -> Result<TexImage2D, String> {
     let tex_image = TexImage2D::from(&image_data);
 
     Ok(tex_image)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Rgba;
+
+
+    #[test]
+    fn test_u32_to_rgba_conversion() {
+        let val = 0x12345678;
+        let result = super::Rgba::from(val);
+        let expected = Rgba::new(0x12, 0x34, 0x56, 0x78);
+
+        assert_eq!(result, expected);
+    }
 }
