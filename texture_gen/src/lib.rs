@@ -21,7 +21,6 @@ enum Token {
     SymDepth,
     SymData,
     SymTypeU32,
-    SymTypeU8,
     SymTypeRgba,
     SymTypeTexImage2D,
     SymTypeVec,
@@ -55,10 +54,6 @@ struct TexImage2DIR {
 impl TexImage2DIR {
     fn new(data: Vec<Token>) -> TexImage2DIR {
         TexImage2DIR { data: data }
-    }
-
-    fn len(&self) -> usize {
-        self.data.len()
     }
 
     fn push(&mut self, item: Token) {
@@ -191,7 +186,9 @@ fn generate_type_constructor_invocation(ir: &mut TexImage2DIR, indent: usize) {
     ir.push(DoubleColon);
     ir.push(SymTexImage2DNew);
     ir.push(LParen);
-    ir.push(SymWidth); ir.push(Comma); ir.push(Whitespace(1)); ir.push(SymHeight); ir.push(Comma); ir.push(Whitespace(1)); ir.push(SymData);
+    ir.push(SymWidth); ir.push(Comma); ir.push(Whitespace(1)); 
+    ir.push(SymHeight); ir.push(Comma); ir.push(Whitespace(1)); 
+    ir.push(SymData);
     ir.push(RParen);
 }
 
@@ -247,7 +244,6 @@ fn synthesize_token(token: Token) -> String {
         SymDepth => format!("{}", "depth"),
         SymData => format!("{}", "data"),
         SymTypeU32 => format!("{}", "u32"),
-        SymTypeU8 => format!("{}", "u8"),
         SymTypeRgba => format!("{}", "Rgba"),
         SymTypeTexImage2D => format!("{}", "TexImage2D"),
         SymTypeVec => format!("{}", "Vec"),
