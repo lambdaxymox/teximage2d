@@ -9,7 +9,7 @@ In order to use the library, add the following line to your `Cargo.toml` file:
 ```
 [dependencies]
 # ...
-teximage2d = "0.1.1"
+teximage2d = "0.1.3"
 # ...
 ```
 and then add the following line to either `lib.rs` or `main.rs` in your code
@@ -23,4 +23,4 @@ Doing code generation to embed large binary assets is a bad idea. The resulting 
 sizes get very large very fast since a compressed binary art asset is being decompressed, and
 then being represented textually (as Rust code in this case). One is probably fine doing 
 code generation with textual art assets such as wavefront obj files since they are already 
-text, however, so the resulting code generated is comparable to the source.
+text, because the resulting code generated is comparable to the source.
