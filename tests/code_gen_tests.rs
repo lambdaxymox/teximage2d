@@ -1,7 +1,7 @@
 use teximage2d;
+use teximage2d::{TexImage2D, Rgba};
 
-
-const CODE_FRAGMENT: &str = "sample_png_test.in";
+const SAMPLE_DATA: &str = "assets/sample.png";
 
 
 /// The integration test data expected from the sample image.
@@ -38,7 +38,7 @@ fn image() -> TexImage2D {
 
 #[test]
 fn test_teximage2d_code_generator() {
-    let result = include!(CODE_FRAGMENT);
+    let result = include!("sample_png_test.in");
     let expected = image();
 
     assert_eq!(result, expected);
@@ -48,7 +48,7 @@ fn test_teximage2d_code_generator() {
 #[test]
 fn test_tex_image_2d_code_generator_end_to_end() {
     let expected = teximage2d::load_file(SAMPLE_DATA).unwrap();
-    let result = include!(CODE_FRAGMENT);
+    let result = include!("sample_png_test.in");
 
     assert_eq!(result, expected);
 }
