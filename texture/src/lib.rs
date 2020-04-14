@@ -102,7 +102,7 @@ pub enum TexImage2DWarning {
     TextureDimensionsAreNotAPowerOfTwo,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TexImage2DResult {
     pub image: TexImage2D,
     pub warnings: TexImage2DWarning,
