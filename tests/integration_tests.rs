@@ -38,7 +38,7 @@ fn image() -> TexImage2D {
 /// The file loader yields the correct width.
 #[test]
 fn test_load_file_yields_correct_width() {
-    let result = teximage2d::load_file(SAMPLE_DATA).unwrap();
+    let result = teximage2d::load_file(SAMPLE_DATA).unwrap().image;
     let expected = image();
 
     assert_eq!(result.width, expected.width);
@@ -47,7 +47,7 @@ fn test_load_file_yields_correct_width() {
 /// The file loader yields the correct width.
 #[test]
 fn test_load_file_yields_correct_height() {
-    let result = texture::load_file(SAMPLE_DATA).unwrap();
+    let result = texture::load_file(SAMPLE_DATA).unwrap().image;
     let expected = image();
 
     assert_eq!(result.height, expected.height);
@@ -57,7 +57,7 @@ fn test_load_file_yields_correct_height() {
 /// of pixels in the expected image.
 #[test]
 fn test_load_file_yields_correct_pixel_count() {
-    let result = teximage2d::load_file(SAMPLE_DATA).unwrap();
+    let result = teximage2d::load_file(SAMPLE_DATA).unwrap().image;
     let expected = image();
 
     assert_eq!(result.pixel_count(), expected.pixel_count());
@@ -68,7 +68,7 @@ fn test_load_file_yields_correct_pixel_count() {
 /// `number of pixels == width * height.`
 #[test]
 fn test_height_times_width_equals_pixel_count() {
-    let image = teximage2d::load_file(SAMPLE_DATA).unwrap();
+    let image = teximage2d::load_file(SAMPLE_DATA).unwrap().image;
     let height = image.height as usize;
     let width = image.width as usize;
     let pixel_count = image.pixel_count();
@@ -79,7 +79,7 @@ fn test_height_times_width_equals_pixel_count() {
 /// The file loader yields the correct data block.
 #[test]
 fn test_load_file_yields_correct_data_block() {
-    let result = teximage2d::load_file(SAMPLE_DATA).unwrap();
+    let result = teximage2d::load_file(SAMPLE_DATA).unwrap().image;
     let expected = image();
 
     assert_eq!(result.data, expected.data);
@@ -88,7 +88,7 @@ fn test_load_file_yields_correct_data_block() {
 /// The file loader yields the expected texture image.
 #[test]
 fn test_load_file_yields_correct_texture_image() {
-    let result = teximage2d::load_file(SAMPLE_DATA).unwrap();
+    let result = teximage2d::load_file(SAMPLE_DATA).unwrap().image;
     let expected = image();
 
     assert_eq!(result, expected);

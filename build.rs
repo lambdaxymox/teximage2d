@@ -9,7 +9,7 @@ use std::io::Write;
 
 fn generate_code_fragment<P: AsRef<Path>>(path: P) -> String {
     let model = texture::load_file(path).unwrap();
-    let fragment = texture_gen::to_rust_code(&model);
+    let fragment = texture_gen::to_rust_code(&model.image);
 
     fragment
 }

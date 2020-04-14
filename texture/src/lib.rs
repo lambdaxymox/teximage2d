@@ -90,19 +90,40 @@ impl<'a> From<&'a image::Image<u8>> for TexImage2D {
     }
 }
 
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum TexImage2DError {
+    CouldNotLoadImageBuffer,
+    Got32BitFloatingPointImageInsteadOfByteImage,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum TexImage2DWarning {
+    NoWarnings,
+    TextureDimensionsAreNotAPowerOfTwo,
+}
+
+#[derive(Debug)]
+pub struct TexImage2DResult {
+    pub image: TexImage2D,
+    pub warnings: TexImage2DWarning,
+}
+
+impl TexImage2DResult {
+    pub fn has_no_warnings(&self) -> bool {
+        self.warnings == TexImage2DWarning::NoWarnings
+    }
+}
 
 /// Load a PNG texture image from a reader or buffer.
-pub fn load_from_memory(buffer: &[u8]) -> Result<TexImage2D, String> {
+pub fn load_from_memory(buffer: &[u8]) -> Result<TexImage2DResult, TexImage2DError> {
     let force_channels = 4;
     let mut image_data = match image::load_from_memory_with_depth(buffer, force_channels, false) {
         LoadResult::ImageU8(image_data) => image_data,
         LoadResult::Error(_) => {
-            return Err(format!("ERROR: could not load image buffer."));
+            return Err(TexImage2DError::CouldNotLoadImageBuffer);//format!("ERROR: could not load image buffer."));
         }
         LoadResult::ImageF32(_) => {
-            return Err(format!(
-                "ERROR: Tried to load an image as byte vectors, got f32 image instead."
-            ));
+            return Err(TexImage2DError::Got32BitFloatingPointImageInsteadOfByteImage);  //format!("ERROR: Tried to load an image as byte vectors, got f32 image instead.")
         }
     };
 
@@ -110,9 +131,11 @@ pub fn load_from_memory(buffer: &[u8]) -> Result<TexImage2D, String> {
     let height = image_data.height;
 
     // Check that the image size is a power of two.
-    if (width & (width - 1)) != 0 || (height & (height - 1)) != 0 {
-        eprintln!("WARNING: Texture buffer is not power-of-2 dimensions");
-    }
+    let warnings = if (width & (width - 1)) != 0 || (height & (height - 1)) != 0 {
+        TexImage2DWarning::TextureDimensionsAreNotAPowerOfTwo //eprintln!("WARNING: Texture buffer is not power-of-2 dimensions");
+    } else {
+        TexImage2DWarning::NoWarnings
+    };
 
     let width_in_bytes = 4 *width;
     let half_height = height / 2;
@@ -125,24 +148,28 @@ pub fn load_from_memory(buffer: &[u8]) -> Result<TexImage2D, String> {
     }
 
     let tex_image = TexImage2D::from(&image_data);
+    let result = TexImage2DResult {
+        image: tex_image,
+        warnings: warnings,
+    };
 
-    Ok(tex_image)
+    Ok(result)
 }
 
 
 /// Load a PNG texture image from a file name.
-pub fn load_file<P: AsRef<Path>>(file_path: P) -> Result<TexImage2D, String> {
+pub fn load_file<P: AsRef<Path>>(file_path: P) -> Result<TexImage2DResult, TexImage2DError> {
     let force_channels = 4;
     let mut image_data = match image::load_with_depth(&file_path, force_channels, false) {
         LoadResult::ImageU8(image_data) => image_data,
         LoadResult::Error(_) => {
             let disp = file_path.as_ref().display();
-            return Err(format!("ERROR: could not load {}", disp));
+            return Err(TexImage2DError::CouldNotLoadImageBuffer); //format!("ERROR: could not load {}", disp));
         }
         LoadResult::ImageF32(_) => {
             let disp = file_path.as_ref().display();
-            return Err(
-                format!("ERROR: Tried to load an image as byte vectors, got f32: {}", disp)
+            return Err(TexImage2DError::Got32BitFloatingPointImageInsteadOfByteImage
+                // format!("ERROR: Tried to load an image as byte vectors, got f32: {}", disp)
             );
         }
     };
@@ -151,10 +178,11 @@ pub fn load_file<P: AsRef<Path>>(file_path: P) -> Result<TexImage2D, String> {
     let height = image_data.height;
 
     // Check that the image size is a power of two.
-    if (width & (width - 1)) != 0 || (height & (height - 1)) != 0 {
-        let disp = file_path.as_ref().display();
-        eprintln!("WARNING: texture {} is not power-of-2 dimensions", disp);
-    }
+    let warnings = if (width & (width - 1)) != 0 || (height & (height - 1)) != 0 {
+        TexImage2DWarning::TextureDimensionsAreNotAPowerOfTwo //eprintln!("WARNING: Texture buffer is not power-of-2 dimensions");
+    } else {
+        TexImage2DWarning::NoWarnings
+    };
 
     let width_in_bytes = 4 * width;
     let half_height = height / 2;
@@ -167,8 +195,12 @@ pub fn load_file<P: AsRef<Path>>(file_path: P) -> Result<TexImage2D, String> {
     }
 
     let tex_image = TexImage2D::from(&image_data);
+    let result = TexImage2DResult {
+        image: tex_image,
+        warnings: warnings,
+    };
 
-    Ok(tex_image)
+    Ok(result)
 }
 
 #[cfg(test)]
