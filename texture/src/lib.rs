@@ -1,6 +1,8 @@
 use stb_image::image;
 use stb_image::image::LoadResult;
 use std::path::Path;
+use std::error::Error;
+use std::fmt;
 
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -96,6 +98,19 @@ pub enum TexImage2DError {
     Got32BitFloatingPointImageInsteadOfByteImage,
 }
 
+impl fmt::Display for TexImage2DError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            TexImage2DError::CouldNotLoadImageBuffer => {
+                write!(f, "{}", "Could not load image buffer.")
+            }
+            TexImage2DError::Got32BitFloatingPointImageInsteadOfByteImage => {
+                write!(f, "{}", "Tried to load an image as byte vectors, got 32 bit floating point image instead.")
+            }
+        }
+    }
+}
+
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum TexImage2DWarning {
     NoWarnings,
@@ -120,10 +135,10 @@ pub fn load_from_memory(buffer: &[u8]) -> Result<TexImage2DResult, TexImage2DErr
     let mut image_data = match image::load_from_memory_with_depth(buffer, force_channels, false) {
         LoadResult::ImageU8(image_data) => image_data,
         LoadResult::Error(_) => {
-            return Err(TexImage2DError::CouldNotLoadImageBuffer);//format!("ERROR: could not load image buffer."));
+            return Err(TexImage2DError::CouldNotLoadImageBuffer);
         }
         LoadResult::ImageF32(_) => {
-            return Err(TexImage2DError::Got32BitFloatingPointImageInsteadOfByteImage);  //format!("ERROR: Tried to load an image as byte vectors, got f32 image instead.")
+            return Err(TexImage2DError::Got32BitFloatingPointImageInsteadOfByteImage);
         }
     };
 
@@ -132,7 +147,7 @@ pub fn load_from_memory(buffer: &[u8]) -> Result<TexImage2DResult, TexImage2DErr
 
     // Check that the image size is a power of two.
     let warnings = if (width & (width - 1)) != 0 || (height & (height - 1)) != 0 {
-        TexImage2DWarning::TextureDimensionsAreNotAPowerOfTwo //eprintln!("WARNING: Texture buffer is not power-of-2 dimensions");
+        TexImage2DWarning::TextureDimensionsAreNotAPowerOfTwo
     } else {
         TexImage2DWarning::NoWarnings
     };
@@ -163,14 +178,10 @@ pub fn load_file<P: AsRef<Path>>(file_path: P) -> Result<TexImage2DResult, TexIm
     let mut image_data = match image::load_with_depth(&file_path, force_channels, false) {
         LoadResult::ImageU8(image_data) => image_data,
         LoadResult::Error(_) => {
-            let disp = file_path.as_ref().display();
-            return Err(TexImage2DError::CouldNotLoadImageBuffer); //format!("ERROR: could not load {}", disp));
+            return Err(TexImage2DError::CouldNotLoadImageBuffer);
         }
         LoadResult::ImageF32(_) => {
-            let disp = file_path.as_ref().display();
-            return Err(TexImage2DError::Got32BitFloatingPointImageInsteadOfByteImage
-                // format!("ERROR: Tried to load an image as byte vectors, got f32: {}", disp)
-            );
+            return Err(TexImage2DError::Got32BitFloatingPointImageInsteadOfByteImage);
         }
     };
 
@@ -179,7 +190,7 @@ pub fn load_file<P: AsRef<Path>>(file_path: P) -> Result<TexImage2DResult, TexIm
 
     // Check that the image size is a power of two.
     let warnings = if (width & (width - 1)) != 0 || (height & (height - 1)) != 0 {
-        TexImage2DWarning::TextureDimensionsAreNotAPowerOfTwo //eprintln!("WARNING: Texture buffer is not power-of-2 dimensions");
+        TexImage2DWarning::TextureDimensionsAreNotAPowerOfTwo
     } else {
         TexImage2DWarning::NoWarnings
     };
