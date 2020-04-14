@@ -111,6 +111,12 @@ impl fmt::Display for TexImage2DError {
     }
 }
 
+impl Error for TexImage2DError {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        None
+    }
+}
+
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum TexImage2DWarning {
     NoWarnings,
