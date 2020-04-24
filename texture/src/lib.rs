@@ -1,8 +1,10 @@
+#![feature(vec_into_raw_parts)]
 use stb_image::image;
 use stb_image::image::LoadResult;
 use std::path::Path;
 use std::error::Error;
 use std::fmt;
+use std::mem;
 
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -211,7 +213,14 @@ pub fn load_file<P: AsRef<Path>>(file_path: P) -> Result<TexImage2DResult, TexIm
         }
     }
 
-    let tex_image = TexImage2D::from(&image_data);
+    let tex_image_data = unsafe { 
+        let (old_ptr, old_length, old_capacity) = image_data.data.into_raw_parts();
+        let ptr = mem::transmute::<*mut u8, *mut Rgba>(old_ptr);
+        let length = old_length / 4;
+        let capacity = old_capacity / 4;
+        Vec::from_raw_parts(ptr, length, capacity)
+    };
+    let tex_image = TexImage2D::from_rgba_data(width as u32, height as u32, tex_image_data);
     let result = TexImage2DResult {
         image: tex_image,
         warnings: warnings,
